@@ -274,5 +274,323 @@ You can answer like this:
 > Finally we deploy using strategies like rolling or blue-green deployment.
 
 ---
+Good. I will give you **one real-time DevOps task** that many companies actually do before deployment.
+You can practice it on your laptop and later explain it confidently in interviews.
+
+We will simulate a **real DevOps pipeline task**.
+
+---
+
+# Real-Time DevOps Practice Task (Step by Step)
+
+## Task Goal
+
+You will:
+
+1. Clone application code
+2. Build application
+3. Create Docker image
+4. Scan image for vulnerabilities
+5. Push image to registry
+6. Deploy to Kubernetes
+
+Tools you will use:
+
+* Git
+* Docker
+* Trivy
+* Kubernetes
+* Docker Hub
+
+---
+
+# Step 1 — Clone Application Code
+
+First get application code from Git repository.
+
+Example:
+
+```bash
+git clone https://github.com/dockersamples/node-bulletin-board
+cd node-bulletin-board
+```
+
+Check files:
+
+```bash
+ls
+```
+
+You should see
+
+```
+Dockerfile
+package.json
+server.js
+```
+
+---
+
+# Step 2 — Build Application (Optional for Node)
+
+Install dependencies.
+
+```bash
+npm install
+```
+
+Run locally to verify:
+
+```bash
+node server.js
+```
+
+Open browser
+
+```
+http://localhost:8080
+```
+
+If it works → application ready.
+
+Stop it
+
+```
+CTRL + C
+```
+
+---
+
+# Step 3 — Build Docker Image
+
+Now create container image using **Dockerfile**.
+
+```bash
+docker build -t yourdockerhubname/nodeapp:v1 .
+```
+
+Example
+
+```bash
+docker build -t bharathiraja3234/nodeapp:v1 .
+```
+
+Check image:
+
+```bash
+docker images
+```
+
+Expected output
+
+```
+bharathiraja3234/nodeapp   v1
+```
+
+---
+
+# Step 4 — Scan Image for Vulnerabilities
+
+Before deployment companies scan image for security issues.
+
+Install scanner:
+
+```bash
+sudo apt install trivy
+```
+
+Run scan:
+
+```bash
+trivy image bharathiraja3234/nodeapp:v1
+```
+
+This shows:
+
+* HIGH vulnerabilities
+* CRITICAL vulnerabilities
+
+Fix if necessary.
+
+---
+
+# Step 5 — Push Image to Docker Registry
+
+Login first.
+
+```bash
+docker login
+```
+
+Push image.
+
+```bash
+docker push bharathiraja3234/nodeapp:v1
+```
+
+Now image stored in:
+
+* Docker Hub
+
+---
+
+# Step 6 — Create Kubernetes Deployment File
+
+Create file
+
+```
+deployment.yaml
+```
+
+Example:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: node-app
+  template:
+    metadata:
+      labels:
+        app: node-app
+    spec:
+      containers:
+      - name: node-container
+        image: bharathiraja3234/nodeapp:v1
+        ports:
+        - containerPort: 8080
+```
+
+---
+
+# Step 7 — Deploy Application to Kubernetes
+
+Apply deployment.
+
+```bash
+kubectl apply -f deployment.yaml
+```
+
+Check pods.
+
+```bash
+kubectl get pods
+```
+
+Check deployment.
+
+```bash
+kubectl get deployment
+```
+
+---
+
+# Step 8 — Expose Application
+
+Create service.
+
+```bash
+kubectl expose deployment node-app --type=NodePort --port=80 --target-port=8080
+```
+
+Check service.
+
+```bash
+kubectl get svc
+```
+
+Open application.
+
+```
+http://node-ip:nodeport
+```
+
+---
+
+# Step 9 — Verify Deployment
+
+Check logs.
+
+```bash
+kubectl logs pod-name
+```
+
+Check rollout.
+
+```bash
+kubectl rollout status deployment node-app
+```
+
+---
+
+# Real DevOps Workflow You Just Practiced
+
+```
+Developer Push Code
+        ↓
+Clone Repository
+        ↓
+Build Application
+        ↓
+Docker Build
+        ↓
+Security Scan (Trivy)
+        ↓
+Push Image (DockerHub)
+        ↓
+Kubernetes Deployment
+        ↓
+Expose Service
+        ↓
+Application Running
+```
+
+---
+
+# Real Interview Explanation (Very Important)
+
+If interviewer asks:
+
+**"Explain your deployment process."**
+
+Answer like this:
+
+> First I clone the application code from Git repository.
+> Then I build the application and verify it locally.
+> After that I containerize the application using Docker.
+> Before pushing the image I scan it using Trivy to check for vulnerabilities.
+> Once the image is secure, I push it to DockerHub.
+> Then I create Kubernetes deployment manifests and deploy the application to the cluster using kubectl.
+> Finally I expose the service and verify pods, logs, and rollout status.
+
+---
+
+# Your Task Now (Practice)
+
+Do these **5 commands now**:
+
+```
+1. git clone node application
+2. docker build image
+3. trivy scan
+4. docker push
+5. kubectl deployment
+```
+
+---
+
+If you want, I can also give you **one COMPLETE REAL COMPANY TASK (CI/CD pipeline project)** using:
+
+* Jenkins
+* SonarQube
+* Docker
+* Kubernetes
+
+This is the **exact project many DevOps engineers show in interviews**.
 
 If you want, I can also give you **10 REAL-TIME TASKS DevOps engineers actually do daily before deployment** (this will help you speak like a **Senior DevOps Engineer in interviews**).
