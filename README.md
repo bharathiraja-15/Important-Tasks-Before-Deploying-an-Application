@@ -594,3 +594,370 @@ If you want, I can also give you **one COMPLETE REAL COMPANY TASK (CI/CD pipelin
 This is the **exact project many DevOps engineers show in interviews**.
 
 If you want, I can also give you **10 REAL-TIME TASKS DevOps engineers actually do daily before deployment** (this will help you speak like a **Senior DevOps Engineer in interviews**).
+Good question. I will give you a **REAL COMPANY STYLE TASK** where you practice **Dev → Stage → Prod deployment like a real DevOps engineer**.
+
+This task will help you understand how **CI/CD pipelines work in companies** using:
+
+* GitHub
+* Jenkins
+* SonarQube
+* Docker
+* Kubernetes
+
+I will explain **exact tasks you must do step-by-step**.
+
+---
+
+# Real DevOps Practice Project
+
+## Dev → Stage → Production Pipeline
+
+You will build a **complete CI/CD pipeline**.
+
+Pipeline flow:
+
+```
+Developer → GitHub
+        ↓
+Jenkins Pipeline
+        ↓
+SonarQube Code Scan
+        ↓
+Docker Build
+        ↓
+Push Docker Image
+        ↓
+Deploy to DEV
+        ↓
+Testing
+        ↓
+Deploy to STAGE
+        ↓
+Approval
+        ↓
+Deploy to PROD
+```
+
+---
+
+# Step 1 — Create a Git Repository
+
+Create repository in **GitHub**
+
+Example repo name
+
+```
+bankapp-devops-project
+```
+
+Add these files:
+
+```
+Dockerfile
+app.py
+requirements.txt
+Jenkinsfile
+deployment-dev.yaml
+deployment-stage.yaml
+deployment-prod.yaml
+```
+
+---
+
+# Step 2 — Sample Application (Simple Python App)
+
+Create `app.py`
+
+```python
+from flask import Flask
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Bank Application Running"
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000)
+```
+
+---
+
+# Step 3 — Requirements File
+
+Create `requirements.txt`
+
+```
+flask
+```
+
+---
+
+# Step 4 — Create Dockerfile
+
+```
+FROM python:3.9
+
+WORKDIR /app
+
+COPY . .
+
+RUN pip install -r requirements.txt
+
+CMD ["python","app.py"]
+```
+
+---
+
+# Step 5 — Create Kubernetes DEV Deployment
+
+`deployment-dev.yaml`
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bankapp-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bankapp-dev
+  template:
+    metadata:
+      labels:
+        app: bankapp-dev
+    spec:
+      containers:
+      - name: bankapp
+        image: yourdockerhub/bankapp:dev
+        ports:
+        - containerPort: 5000
+```
+
+---
+
+# Step 6 — Create STAGE Deployment
+
+`deployment-stage.yaml`
+
+```
+replicas: 2
+image: yourdockerhub/bankapp:stage
+```
+
+---
+
+# Step 7 — Create PROD Deployment
+
+`deployment-prod.yaml`
+
+```
+replicas: 3
+image: yourdockerhub/bankapp:prod
+```
+
+Production always has **more replicas**.
+
+---
+
+# Step 8 — Setup SonarQube
+
+Install **SonarQube**
+
+Run container:
+
+```bash
+docker run -d -p 9000:9000 sonarqube
+```
+
+Open
+
+```
+http://localhost:9000
+```
+
+Create project and get **token**.
+
+---
+
+# Step 9 — Setup Jenkins
+
+Install **Jenkins**
+
+Install plugins:
+
+* Docker pipeline
+* SonarQube scanner
+* Kubernetes CLI
+* Git
+
+---
+
+# Step 10 — Create Jenkins Pipeline
+
+Create `Jenkinsfile`
+
+Example pipeline:
+
+```groovy
+pipeline {
+ agent any
+
+ stages {
+
+ stage('Clone Code') {
+ steps {
+ git 'https://github.com/yourrepo/bankapp-devops-project'
+ }
+ }
+
+ stage('SonarQube Scan') {
+ steps {
+ sh 'sonar-scanner'
+ }
+ }
+
+ stage('Build Docker Image') {
+ steps {
+ sh 'docker build -t yourdockerhub/bankapp:dev .'
+ }
+ }
+
+ stage('Push Image') {
+ steps {
+ sh 'docker push yourdockerhub/bankapp:dev'
+ }
+ }
+
+ stage('Deploy to Dev') {
+ steps {
+ sh 'kubectl apply -f deployment-dev.yaml'
+ }
+ }
+
+ stage('Deploy to Stage') {
+ steps {
+ input 'Approve for Stage?'
+ sh 'kubectl apply -f deployment-stage.yaml'
+ }
+ }
+
+ stage('Deploy to Production') {
+ steps {
+ input 'Approve for Production?'
+ sh 'kubectl apply -f deployment-prod.yaml'
+ }
+ }
+
+ }
+}
+```
+
+---
+
+# Step 11 — Run Pipeline
+
+When developer pushes code to **GitHub**:
+
+Pipeline will:
+
+1. Clone code
+2. Scan code
+3. Build Docker image
+4. Push image
+5. Deploy to DEV
+6. Deploy to STAGE
+7. Deploy to PROD
+
+---
+
+# Real DevOps Environment Structure
+
+Cluster layout:
+
+```
+Kubernetes Cluster
+
+Namespace: dev
+Namespace: stage
+Namespace: prod
+```
+
+Example:
+
+```
+kubectl create namespace dev
+kubectl create namespace stage
+kubectl create namespace prod
+```
+
+---
+
+# Real Company Deployment Flow
+
+```
+Developer Push Code
+        ↓
+CI Pipeline Trigger
+        ↓
+Code Scan (SonarQube)
+        ↓
+Docker Build
+        ↓
+Push Docker Image
+        ↓
+Deploy DEV
+        ↓
+QA Testing
+        ↓
+Deploy STAGE
+        ↓
+Manager Approval
+        ↓
+Deploy PROD
+```
+
+---
+
+# Your Practice Tasks (Do These)
+
+Task 1
+Create **GitHub repository**
+
+Task 2
+Create **Python application**
+
+Task 3
+Create **Dockerfile**
+
+Task 4
+Push code to GitHub
+
+Task 5
+Install **Jenkins**
+
+Task 6
+Install **SonarQube**
+
+Task 7
+Create **Jenkins pipeline**
+
+Task 8
+Create **Kubernetes deployments**
+
+Task 9
+Run pipeline
+
+---
+
+# When you finish this project you can confidently say in interview
+
+> I implemented a CI/CD pipeline using GitHub, Jenkins, SonarQube, Docker and Kubernetes where the pipeline automatically builds the application, scans code, builds Docker images, pushes them to registry and deploys them to Dev, Stage and Production environments.
+
+---
+
+✅ If you want, I can also give you a **SUPER REALISTIC DevOps project used in interviews in 2025–2026**:
+
+**Terraform + EKS + Jenkins + ArgoCD + Kubernetes + Monitoring**
+
+This is the **exact project that makes interviewers think you are a Senior DevOps engineer.**
